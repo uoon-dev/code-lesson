@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "프로그램 시작",
-      "program": "${workspaceFolder}/step01/lotto01.js"
+      "program": "${workspaceFolder}/step02/star01.js"
     }
   ]
 }
