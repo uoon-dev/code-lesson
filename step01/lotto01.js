@@ -6,9 +6,15 @@
  * 5. 발행한 로또와 당첨넘버를 비교하는 함수
  * 6. 당첨통계를 확인 or 출력하는 함수
  */
-const generateRandomIndex = (max) => {
+const buyLottos = money => {
+  const lottoCount = Math.floor(money / 1000);
+  const lottos = createLottos(lottoCount);
+  console.log(lottos);
+};
+
+const generateRandomIndex = max => {
   return Math.floor(Math.random() * max);
-}
+};
 
 const createLotto = () => {
   const lotto = [];
@@ -18,40 +24,34 @@ const createLotto = () => {
   }
 
   for (let i = 0; i < 6; i++) {
-    lotto.push(AllLottoNumbers.splice(generateRandomIndex(0, AllLottoNumbers.length), 1)[0]);
+    lotto.push(
+      AllLottoNumbers.splice(
+        generateRandomIndex(0, AllLottoNumbers.length),
+        1
+      )[0]
+    );
+    debugger;
   }
-
+  // [0] 은 [[]]이중배열에서 분리해 주기위해 필요
   return lotto;
-}
+};
 
-const createLottos = (lottoCount) => {
+const createLottos = lottoCount => {
   const lottos = [];
   for (let i = 0; i < lottoCount; i++) {
     lottos.push(createLotto());
   }
 
   return lottos;
-}
+};
 
-const buyLottos = (money) => {
-  const lottoCount = Math.floor(money / 1000);
-  const lottos = createLottos(lottoCount);
-  console.log(lottos);
-}
-
-setLuckyNumbers();
+//setLuckyNumbers();
 buyLottos(5000);
-
-
 
 const setLuckyNumbers = () => {
   return createLotto();
-}
+};
 
-const compareNumbers = () => {
+const compareNumbers = () => {};
 
-}
-
-const displayWinStatistics = () => {
-
-}
+const displayWinStatistics = () => {};
