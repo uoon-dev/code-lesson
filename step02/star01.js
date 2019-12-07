@@ -6,13 +6,13 @@
 ****
 *****
 */
-
-let string = '';
+let string = "";
 for (let i = 0; i < 5; i++) {
-  for (let j = 0 ; j <= i; j++) {
-    string += '*'
+  for (let j = 0; j <= i; j++) {
+    debugger;
+    string += "*";
   }
-  string += '\n'
+  string += "\n";
+  debugger;
 }
-
 console.log(string);

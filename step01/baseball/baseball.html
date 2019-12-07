@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="team1"></div>
+    <div class="team2"></div>
+    <div class="team1score"></div>
+    <div class="team2score"></div>
+    <button class="showNextTugu" onclick="nextTugu()">다음투구보기</button>
+    <input type="number" class="targetRoundText" />
+    <button class="playTheRound" onclick="playTheRound()">
+      스킵하고 X회말 후 투구보기
+    </button>
+    <div class="team1TotalScore"></div>
+    <div class="team2TotalScore"></div>
+    <div class="gameStatus"></div>
+    <div class="team1GameTotalStatus"></div>
+    <div class="team2GameTotalStatus"></div>
+    <script>
+      let currnetRound = 0;
+      let targetRound = 5;
+      let isInnging1 = true;
+      const playersCount = 9;
+      const players1 = [];
+      const players2 = [];
+      const teamList = [];
+      const getPlayerAverage = i => {
+        let average = NaN;
+        while (true) {
+          if (!Number.isNaN(average) && 0.1 < average && average < 0.5) {
+            break; //주어진 값의 유형이 Number이고 값이 NaN이면 true, 아니면 false.
+          }
+          average = Number(
+            prompt(
+              `${i + 1}번째 선수의 타율을 입력해 주세요 (0.1 < h < 0.5) h의 기준
+                     `
+            )
+          );
+        }
+        return average;
+      };
+      const getPlayerName = i => {
+        let name = null;
+        while (true) {
+          if (name) {
+            break; //prompt 때문에 ""비어있는 string 출력 => 때문에 parameter name
+          }
+          name = prompt(`${i + 1}번째 선수의 이름을 입력해 주세요.`);
+        }
+        return name;
+      };
+
+      const getPlayerInfo = i => {
+        const name = getPlayerName(i);
+        const average = getPlayerAverage(i);
+        return { name, average };
+      };
+      const getUserInput = () => {
+        let teamName = prompt(`1번 팀의 이름을 입력해 주세요`);
+        teamList.push({ teamName });
+        for (let i = 0; i < playersCount; i++) {
+          const player = getPlayerInfo(i);
+          players1.push(player);
+        }
+
+        teamName = prompt(`2번 팀의 이름을 입력해 주세요`);
+        teamList.push({ teamName });
+        for (let i = 0; i < playersCount; i++) {
+          const player = getPlayerInfo(i);
+          players2.push(player);
+        }
+      };
+      const displayPlayerInfo = () => {
+        for (let i = 0; i < playersCount; i++) {
+          console.log(
+            `팀명 : ${teamList[0].teamName} 선수명 : ${players1[i].name} 타율 : ${players1[i].average}`
+          );
+        }
+        for (let j = 0; j < playersCount; j++) {
+          console.log(
+            `팀명 : ${teamList[1].teamName} 선수명 : ${players2[j].name} 타율 : ${players2[j].average}`
+          );
+        }
+      };
+      getUserInput();
+      document.querySelector(".team1").innerHTML = `
+        <div>팀명: ${teamList[0].teamName}</div>
+        <div>선수들: ${players1.map(player => player.name).join(",")}</div>
+      `;
+
+      document.querySelector(".team2").innerHTML = `
+        <div>팀명: ${teamList[1].teamName}</div>
+        <div>선수들: ${players2.map(player => player.name).join(",")}</div>
+      `;
+      // displayPlayerInfo();
+
+      const gameRound = 6;
+
+      let team1PlayerCount = 0;
+      let team2PlayerCount = 0;
+
+      const team1scoreTypes = {
+        strike: 0,
+        ball: 0,
+        out: 0,
+        hit: 0,
+        score: 0,
+        scores: [],
+        totalTugu: 0,
+        totalThreeStrike: 0,
+        totalHit: 0
+      }; // 1번팀의 score
+
+      const team2scoreTypes = {
+        strike: 0,
+        ball: 0,
+        out: 0,
+        hit: 0,
+        score: 0,
+        scores: [],
+        totalTugu: 0,
+        totalThreeStrike: 0,
+        totalHit: 0
+      }; // 2번팀의 score
+
+      const displayTeam1Score = () => {
+        console.log(
+          `strike : ${team1scoreTypes.strike} ball : ${team1scoreTypes.ball} out : ${team1scoreTypes.out}`
+        );
+      };
+      const displayTeam2Score = () => {
+        console.log(
+          `strike : ${team2scoreTypes.strike} ball : ${team2scoreTypes.ball} out : ${team2scoreTypes.out}`
+        );
+      };
+
+      const getScorePercentage = () => {
+        const randomNumber = Math.random();
+        return randomNumber;
+      }; //이 값을 계속해서 바뀌해 실행할 방법이 뭐가 있을까?
+
+      // team 1의 out hit input 값들
+      const team1OutInput = () => {
+        team1scoreTypes.out++;
+        team1PlayerCount++;
+        team1scoreTypes.strike = 0;
+        team1scoreTypes.ball = 0;
+        console.log("아웃 ! 선수가 교체됩니다.");
+        displayTeam1Score();
+      };
+      const team1HitInput = () => {
+        team1scoreTypes.hit++;
+        team1PlayerCount++;
+        team1scoreTypes.strike = 0;
+        team1scoreTypes.ball = 0;
+        console.log("안타 ! 선수가 교체됩니다.");
+        displayTeam1Score();
+      };
+      // team 2의 out hit input 값들
+      const team2OutInput = () => {
+        team2scoreTypes.out++;
+        team2PlayerCount++;
+        team2scoreTypes.strike = 0;
+        team2scoreTypes.ball = 0;
+        console.log("아웃 ! 선수가 교체됩니다.");
+        displayTeam2Score();
+      };
+
+      const team2HitInput = () => {
+        team2scoreTypes.hit++;
+        team2PlayerCount++;
+        team2scoreTypes.strike = 0;
+        team2scoreTypes.ball = 0;
+        console.log("안타 ! 선수가 교체됩니다.");
+        displayTeam2Score();
+      };
+
+      const getBattingResultByAverage1 = () => {
+        const randomNumber = getScorePercentage();
+        const player = players1[team1PlayerCount % players1.length];
+        const hitMaxProps = player.average;
+        //console.log(hitMaxProps); 타율 확인 console
+        const strikeMaxProps = hitMaxProps + (1 - hitMaxProps) / 2 - 0.05;
+        const ballMaxProps = strikeMaxProps + (1 - hitMaxProps) / 2 - 0.05; //1번팀의 score 확률 계산식
+        const outMaxProps = 0.1;
+        console.log(`${player.name}`);
+        if (randomNumber <= hitMaxProps) {
+          team1HitInput();
+          team1scoreTypes.totalHit += 1;
+          return true;
+        } else if (randomNumber <= strikeMaxProps) {
+          team1scoreTypes.strike++;
+          console.log("스트라이크 ! ");
+          displayTeam1Score();
+          if (team1scoreTypes.strike === 3) {
+            team1scoreTypes.totalThreeStrike += 1;
+            team1OutInput();
+            return true;
+          }
+          //스트라이크에 ++
+        } else if (randomNumber <= ballMaxProps) {
+          team1scoreTypes.ball++;
+          console.log("볼 ! ");
+          displayTeam1Score();
+          if (team1scoreTypes.ball === 4) {
+            team1HitInput();
+            return true;
+          }
+        } else {
+          team1OutInput();
+          return true;
+        }
+        return false;
+      };
+
+      const getBattingResultByAverage2 = () => {
+        const randomNumber = getScorePercentage();
+        const player = players2[team2PlayerCount % players2.length];
+        const hitMaxProps = player.average;
+        const strikeMaxProps = hitMaxProps + (1 - hitMaxProps) / 2 - 0.05;
+        const ballMaxProps = strikeMaxProps + (1 - hitMaxProps) / 2 - 0.05; //2번팀의 score 확률 계산식
+        const outMaxProps = 0.1;
+        console.log(`${player.name}`);
+        if (randomNumber <= hitMaxProps) {
+          team2scoreTypes.totalHit += 1;
+          team2HitInput();
+          return true;
+        } else if (randomNumber <= strikeMaxProps) {
+          team2scoreTypes.strike++;
+          console.log("스트라이크 ! ");
+          displayTeam2Score();
+          if (team2scoreTypes.strike === 3) {
+            team2OutInput();
+            team2scoreTypes.totalThreeStrike += 1;
+            return true;
+          }
+          //스트라이크에 ++
+        } else if (randomNumber <= ballMaxProps) {
+          team2scoreTypes.ball++;
+          console.log("볼 ! ");
+          displayTeam2Score();
+          if (team2scoreTypes.ball === 4) {
+            team2HitInput();
+            return true;
+          }
+        } else {
+          team2OutInput();
+          return true;
+        }
+        return false;
+      };
+
+      const getTeam1Score = () => {
+        const score = team1scoreTypes.hit - 3 > 0 ? team1scoreTypes.hit - 3 : 0;
+        team1scoreTypes.scores.push(score);
+        team1scoreTypes.score += score;
+        document.querySelector(".team1score").innerHTML = `
+        <div> ${teamList[0].teamName} 점수: ${team1scoreTypes.scores.join(
+          ","
+        )}</div>
+      `;
+
+        document.querySelector(".team1TotalScore").innerHTML = `
+        <div> ${teamList[0].teamName} 총점수: ${team1scoreTypes.score}</div>
+      `;
+      };
+
+      const getTeam2Score = () => {
+        const score = team2scoreTypes.hit - 3 > 0 ? team2scoreTypes.hit - 3 : 0;
+        team2scoreTypes.scores.push(score);
+        team2scoreTypes.score += score;
+        document.querySelector(".team2score").innerHTML = `
+        <div> ${teamList[1].teamName} 점수: ${team2scoreTypes.scores.join(
+          ","
+        )}</div>
+      `;
+        document.querySelector(".team2TotalScore").innerHTML = `
+        <div> ${teamList[1].teamName} 총점수: ${team2scoreTypes.score}</div>
+      `;
+      };
+      const showGameStatus = () => {
+        if (isInnging1) {
+          document.querySelector(".gameStatus").innerHTML = `
+        <div>S:${team1scoreTypes.strike}</div>
+        <div>B:${team1scoreTypes.ball}</div>
+        <dib>O:${team1scoreTypes.out}</div>
+      `;
+          document.querySelector(".team1GameTotalStatus").innerHTML = `
+          <div>${teamList[0].teamName}</div>
+        <div>총 누적 투구 수:${team1scoreTypes.totalTugu}</div>
+        <div>총 누적 삼진 수:${team1scoreTypes.totalThreeStrike}</div>
+        <dib>총 누적 안타 수:${team1scoreTypes.totalHit}</div>
+      `;
+        } else {
+          document.querySelector(".gameStatus").innerHTML = `
+        <div>S:${team2scoreTypes.strike}</div>
+        <div>B:${team2scoreTypes.ball}</div>
+        <dib>O:${team2scoreTypes.out}</div>
+      `;
+
+          document.querySelector(".team2GameTotalStatus").innerHTML = `
+          <div>${teamList[1].teamName}</div>
+        <div>총 누적 투구 수:${team2scoreTypes.totalTugu}</div>
+        <div>총 누적 삼진 수:${team2scoreTypes.totalThreeStrike}</div>
+        <dib>총 누적 안타 수:${team2scoreTypes.totalHit}</div>
+      `;
+        }
+      };
+      const inning1 = (nextTuguOn = false) => {
+        console.log(`${teamList[0].teamName}`);
+
+        while (true) {
+          team1scoreTypes.totalTugu += 1;
+          getBattingResultByAverage1();
+          showGameStatus();
+          if (team1scoreTypes.out === 3) {
+            getTeam1Score();
+            // console.log("getTeam1Score", team1scoreTypes.scores.join(","));
+            team1scoreTypes.out = 0;
+            team1scoreTypes.hit = 0;
+            isInnging1 = false;
+            break;
+          }
+          if (nextTuguOn) {
+            break;
+          }
+        }
+      };
+
+      const inning2 = (nextTuguOn = false) => {
+        console.log(`${teamList[1].teamName}`);
+
+        while (true) {
+          team1scoreTypes.totalTugu += 2;
+          getBattingResultByAverage2();
+          showGameStatus();
+          if (team2scoreTypes.out === 3) {
+            getTeam2Score();
+            // console.log("getTeam2Score", team2scoreTypes.scores.join(","));
+            team2scoreTypes.out = 0;
+            team2scoreTypes.hit = 0;
+            isInnging1 = true;
+            break;
+          }
+          if (nextTuguOn) {
+            break;
+          }
+        }
+      };
+
+      const nextTugu = () => {
+        if (isInnging1) {
+          inning1(true);
+        } else {
+          inning2(true);
+        }
+      };
+
+      const playTheRound = () => {
+        const targetRound = Number(
+          document.querySelector(".targetRoundText").value
+        );
+        if (!Number.isInteger(targetRound)) {
+          alert("다음 회차는 숫자여야합니다.");
+          return;
+        }
+        if (targetRound < currnetRound) {
+          alert("다음 회차는 더 커야합니다.");
+          return;
+        }
+        if (targetRound >= 6) {
+          alert("최대 차수는 6입니다.");
+          return;
+        }
+
+        for (let i = currnetRound; i < targetRound; i++) {
+          console.log(`★${i + 1}회 초 팀 :${teamList[0].teamName}의 공격 !★`);
+          inning1();
+          if (
+            currnetRound === 5 &&
+            team1scoreTypes.score < team2scoreTypes.score
+          ) {
+            break;
+          }
+          console.log(`★${i + 1}회 말 팀 :${teamList[1].teamName}의 공격 !★`);
+          inning2();
+        }
+        currnetRound = targetRound;
+        if (currnetRound == 6) {
+          if (team1scoreTypes.score === team2scoreTypes.score) {
+            console.log(`무승부 입니다.`);
+          } else {
+            console.log(`${team1scoreTypes.score} : ${team2scoreTypes.score}
+          ${teamList[0].teamName} : ${teamList[1].teamName} 
+          경기가 종료됬습니다`);
+          }
+        }
+      };
+
+      const gugudanLength = 9;
+      const gugudan = () => {
+        for (let i = 2; i <= gugudanLength; i++) {
+          for (let j = 1; j <= gugudanLength; j++) {
+            console.log(`${i} X ${j} = ${i * j}`);
+          }
+        }
+      };
+    </script>
+  </body>
+</html>
