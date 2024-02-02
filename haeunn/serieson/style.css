@@ -1,0 +1,30 @@
+body{
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 0.8rem;
+}
+
+/* ul {
+    list-style: none;
+} */
+ .list {
+    display: grid;
+    grid-template-columns: repeat(5, 145px);
+    gap: 2rem 2rem;
+    padding-left: 40px;
+    width: 100px;
+    /* display: -webkit-box;
+    word-wrap: break-word;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    overflow: hidden; */
+
+ }
+
+.img{
+    padding-left: 2.5rem;
+}
+
+ img {
+    padding-right: 2.2rem;
+ }
