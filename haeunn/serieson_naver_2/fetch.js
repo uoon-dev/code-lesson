@@ -52,15 +52,21 @@ _fetch(url)
   .then((data) => {
     const peopleList = data.peopleListResult.peopleList;
     const ul = document.querySelector(".list");
+    const movieName = document.querySelector(".movieNm");
+    const moviePerson = document.querySelector(".person");
+    const movieRole = document.querySelector(".role");
 
     ul.innerHTML = peopleList
       .map(
         (people) => `<li>
-        <img src="http://placehold.it/140x180" />
+        <img src="/images/지금 이대로가 좋아.png"/>
         <p>
-        이름: ${people.peopleNm} ,
-        역할: ${people.repRoleNm} ,
-        영화: ${people.filmoNames}
+        <div class="sales-movie-name">
+        ${people.filmoNames}
+        </div>
+        <div class="sales-movie-info">
+        ${people.peopleNm}(${people.repRoleNm})
+        </div>
         </p>
         </li>`
       )
@@ -68,16 +74,3 @@ _fetch(url)
 
     console.log(data);
   });
-
-// const otherList = peopleList.slice(1, peopleList.length).map(
-//   (people) =>
-//     `<li class= "others">
-//         <img src="http://placehold.it/140x180" />
-//         <p>
-
-//         이름: ${people.peopleNm} ,
-//         역할: ${people.repRoleNm} ,
-//         영화: ${people.filmoNames}
-//         </p>
-//       </li>`
-// );
